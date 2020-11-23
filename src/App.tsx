@@ -14,12 +14,16 @@ import Image8 from "./assets/space-8.jpg";
 import Carousel from "../src/components/Carousel";
 
 function App() {
+  const handleRotate = function (node) {
+    console.log(node);
+  };
+
   return (
     <div
       className="App"
       style={{ width: "300px", height: "300px", margin: "200px auto 0" }}
     >
-      <Carousel>
+      <Carousel onRotate={handleRotate}>
         <img src={Image1} alt="space" />
         <img src={Image2} alt="space" />
         <img src={Image3} alt="space" />

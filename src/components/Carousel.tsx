@@ -2,6 +2,7 @@ import React, { Children } from "react";
 import ReactDOM from "react-dom";
 
 import LinkedList from "../models/LinkedList";
+import Node from "../models/Node";
 import Slide from "../models/Slide";
 import getDocument from "../shims/document";
 import getWindow from "../shims/window";
@@ -34,6 +35,7 @@ interface Props {
   autoPlay?: boolean;
   children?: React.ReactChild[];
   useKeyboardArrows?: boolean;
+  onRotate?: (node: Node) => void;
 }
 
 interface State {
@@ -59,6 +61,10 @@ export default class Carousel extends React.Component<Props, State> {
     };
 
     this.buildList();
+  }
+
+  componentDidMount() {
+    this.setState({ initialized: true });
   }
 
   componentDidUpdate(prevProps: Props, prevState: State) {
@@ -110,7 +116,7 @@ export default class Carousel extends React.Component<Props, State> {
     this.rotateCarousel();
   }
 
-  moveRight() {
+  moveRight = () => {
     this.setState(
       function (state, props) {
         return {
@@ -121,9 +127,9 @@ export default class Carousel extends React.Component<Props, State> {
         this.rotateCarousel();
       }
     );
-  }
+  };
 
-  moveLeft() {
+  moveLeft = () => {
     this.setState(
       function (state, props) {
         return {
@@ -134,7 +140,7 @@ export default class Carousel extends React.Component<Props, State> {
         this.rotateCarousel();
       }
     );
-  }
+  };
 
   bindEvents() {
     if (this.props.useKeyboardArrows) {
@@ -153,6 +159,8 @@ export default class Carousel extends React.Component<Props, State> {
       (this.theta as any) * (this.state.currentIndex as number) * -1;
     this.carouselWrapperRef.style.transform =
       "translateZ(" + -this.radius + "px) " + "rotateY" + "(" + angle + "deg)";
+
+    this.props.onRotate(this.getCurrentNode());
   }
 
   setSceneRef = (node: HTMLDivElement) => {
@@ -161,7 +169,6 @@ export default class Carousel extends React.Component<Props, State> {
 
   setCarouselWrapperRef = (node: HTMLDivElement) => {
     this.carouselWrapperRef = node;
-    this.setState({ initialized: true });
   };
 
   setItemRef = (element: HTMLElement, index: number) => {
@@ -169,27 +176,44 @@ export default class Carousel extends React.Component<Props, State> {
     node.value.element = element;
   };
 
-  handleClickItem(item: React.ReactNode, index: number) {
-    this.moveRight();
+  getActualIndex() {
+    return Math.sign(this.state.currentIndex) < 0
+      ? this.list.length - Math.abs(this.state.currentIndex)
+      : this.state.currentIndex % this.list.length;
   }
+
+  getCurrentNode() {
+    const idx = this.getActualIndex();
+
+    return this.list.getNodeAtIndex(idx);
+  }
+
+  handleClickItem(node: Node, index: number) {}
+
+  handleLeftControlClick = () => {
+    this.moveLeft();
+  };
+
+  handleRightControlClick = () => {
+    this.moveRight();
+  };
 
   //RENDER
 
   renderItems() {
-    if (!this.props.children) return;
-    if (!this.sceneRef) return;
+    if (!this.props.children || !this.sceneRef) return;
 
     const { width, height } = this.sceneRef.getBoundingClientRect();
 
-    return Children.map(this.props.children, (item, index) => {
+    return [...this.list].map((node, index) => {
       const slideProps = {
         ref: (element: HTMLDivElement) => this.setItemRef(element, index),
-        onClick: this.handleClickItem.bind(this, item, index),
+        onClick: this.handleClickItem.bind(this, node, index),
         className: "x-carousel__slide",
         style: { width: width + "px", height: height + "px" },
       };
 
-      return <div {...slideProps}>{item}</div>;
+      return <div {...slideProps}>{node.value.item}</div>;
     });
   }
 
@@ -199,6 +223,14 @@ export default class Carousel extends React.Component<Props, State> {
         <div className="x-carousel" ref={this.setCarouselWrapperRef}>
           {this.renderItems()}
         </div>
+        <div
+          className="x-scene-lcontrol"
+          onClick={this.handleLeftControlClick}
+        ></div>
+        <div
+          className="x-scene-rcontrol"
+          onClick={this.handleRightControlClick}
+        ></div>
       </div>
     );
   }
