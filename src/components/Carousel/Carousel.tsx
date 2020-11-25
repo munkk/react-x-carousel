@@ -1,11 +1,11 @@
 import React, { Children } from "react";
 import ReactDOM from "react-dom";
 
-import LinkedList from "../models/LinkedList";
-import Node from "../models/Node";
-import Slide from "../models/Slide";
-import getDocument from "../shims/document";
-import getWindow from "../shims/window";
+import LinkedList from "../../models/LinkedList";
+import Node from "../../models/Node";
+import Slide from "../../models/Slide";
+import getDocument from "../../shims/document";
+import getWindow from "../../shims/window";
 
 import "./Carousel.scss";
 
@@ -81,8 +81,8 @@ export default class Carousel extends React.Component<Props, State> {
   buildList() {
     if (!this.props.children) return;
 
-    Children.map(this.props.children, (item, index) => {
-      const slide = new Slide(index, item, React.createRef());
+    Children.map(this.props.children, (item: any, index) => {
+      const slide = new Slide(index, item.props.data, React.createRef());
       this.list.push(slide);
     });
 
@@ -155,11 +155,11 @@ export default class Carousel extends React.Component<Props, State> {
   rotateCarousel() {
     if (!this.carouselWrapperRef) return;
 
-    const angle =
-      (this.theta as any) * (this.state.currentIndex as number) * -1;
+    const angle = this.theta * this.state.currentIndex * -1;
     this.carouselWrapperRef.style.transform =
       "translateZ(" + -this.radius + "px) " + "rotateY" + "(" + angle + "deg)";
 
+    this.updateClassList();
     this.props.onRotate(this.getCurrentNode());
   }
 
@@ -198,6 +198,41 @@ export default class Carousel extends React.Component<Props, State> {
     this.moveRight();
   };
 
+  removeExtraClasses(element) {
+    return (element.className = element.className
+      .replace(classRemover, "")
+      .replace(whiteSpaceRemover, " "));
+  }
+
+  updateClassList() {
+    const centerNode = this.getCurrentNode();
+    const centerElement = centerNode.value.element;
+
+    this.removeExtraClasses(centerElement);
+    centerElement.classList.add("x-current");
+
+    let counter = 0;
+    const max = Math.floor(this.list.length / 2);
+    let currentNode = centerNode;
+    while (counter < max) {
+      const element = currentNode.next.value.element;
+      this.removeExtraClasses(element);
+      element.classList.add("x-next-" + counter);
+      currentNode = currentNode.next;
+      counter++;
+    }
+
+    counter = 0;
+    currentNode = centerNode;
+    while (counter < max) {
+      const element = currentNode.prev.value.element;
+      this.removeExtraClasses(element);
+      element.classList.add("x-prev-" + counter);
+      currentNode = currentNode.prev;
+      counter++;
+    }
+  }
+
   //RENDER
 
   renderItems() {
@@ -205,7 +240,7 @@ export default class Carousel extends React.Component<Props, State> {
 
     const { width, height } = this.sceneRef.getBoundingClientRect();
 
-    return [...this.list].map((node, index) => {
+    return Children.map(this.props.children, (node, index) => {
       const slideProps = {
         ref: (element: HTMLDivElement) => this.setItemRef(element, index),
         onClick: this.handleClickItem.bind(this, node, index),
@@ -213,7 +248,7 @@ export default class Carousel extends React.Component<Props, State> {
         style: { width: width + "px", height: height + "px" },
       };
 
-      return <div {...slideProps}>{node.value.item}</div>;
+      return <div {...slideProps}>{node}</div>;
     });
   }
 
