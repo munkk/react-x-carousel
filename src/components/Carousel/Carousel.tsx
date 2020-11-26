@@ -9,6 +9,14 @@ import getWindow from "../../shims/window";
 
 import "./Carousel.scss";
 
+declare interface ResizeObserver {
+  observe(target: Element): void;
+  unobserve(target: Element): void;
+  disconnect(): void;
+}
+
+declare var ResizeObserver: any;
+
 const classes = {
   itemCurrent: "x-current",
   itemPast: "x-prev",
@@ -70,6 +78,7 @@ export default class Carousel extends React.Component<Props, State> {
   componentDidUpdate(prevProps: Props, prevState: State) {
     if (!prevState.initialized && this.state.initialized) {
       this.calculateDimension();
+      this.setResizeListener();
       this.changeCarousel();
     }
   }
@@ -97,6 +106,19 @@ export default class Carousel extends React.Component<Props, State> {
     this.cellsCount = Children.count(this.props.children) || 0;
     this.theta = 360 / this.cellsCount;
     this.radius = Math.round(width / 2 / Math.tan(Math.PI / this.cellsCount));
+  }
+
+  setResizeListener() {
+    const resizeObserver = new ResizeObserver((entries) => {
+      entries.forEach((scene) => {
+        const { width, height } = scene.contentRect;
+        this.calculateDimension();
+        this.changeCarousel();
+        this.forceUpdate();
+      });
+    });
+
+    resizeObserver.observe(this.sceneRef);
   }
 
   changeCarousel() {
@@ -158,6 +180,12 @@ export default class Carousel extends React.Component<Props, State> {
     const angle = this.theta * this.state.currentIndex * -1;
     this.carouselWrapperRef.style.transform =
       "translateZ(" + -this.radius + "px) " + "rotateY" + "(" + angle + "deg)";
+
+    //fix initial animation
+    setTimeout(
+      () => (this.carouselWrapperRef.style.transition = "transform 1s"),
+      0
+    );
 
     this.updateClassList();
     this.props.onRotate(this.getCurrentNode());

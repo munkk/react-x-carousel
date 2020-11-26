@@ -66,9 +66,9 @@ function App() {
     <div className="App">
       <div style={{ width: "100%", height: "400px", margin: "200px auto 0" }}>
         <Carousel onRotate={handleRotate}>
-          {items.map((item) => {
+          {items.map((item, idx) => {
             return (
-              <Slide data={item}>
+              <Slide data={item} key={idx}>
                 <img src={item.image} alt="space" />
               </Slide>
             );
