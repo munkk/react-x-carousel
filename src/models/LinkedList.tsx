@@ -1,108 +1,108 @@
-import Node from "./Node";
+import Node from './Node'
 
 export default class LinkedList implements Iterable<Node> {
-  public head: any;
-  public tail: any;
-  public length;
+  public head: any
+  public tail: any
+  public length
 
   constructor() {
-    this.head = null;
-    this.tail = null;
-    this.length = 0;
+    this.head = null
+    this.tail = null
+    this.length = 0
   }
 
   *[Symbol.iterator]() {
-    let current = this.head;
-    let idx = this.length;
+    let current = this.head
+    let idx = this.length
 
     while (idx) {
-      yield current;
-      current = current.next;
-      idx--;
+      yield current
+      current = current.next
+      idx--
     }
   }
 
-  push(val) {
-    const newNode = new Node(val);
+  push(val: any) {
+    const newNode = new Node(val)
     if (!this.head) {
-      this.head = newNode;
-      this.tail = newNode;
+      this.head = newNode
+      this.tail = newNode
     } else {
-      this.tail.next = newNode;
-      newNode.prev = this.tail;
-      this.tail = newNode;
+      this.tail.next = newNode
+      newNode.prev = this.tail
+      this.tail = newNode
     }
 
-    this.length++;
-    return this;
+    this.length++
+    return this
   }
 
   connectTailWithHead() {
-    this.tail.next = this.head;
-    this.head.prev = this.tail;
+    this.tail.next = this.head
+    this.head.prev = this.tail
   }
 
   pop() {
     //in case of empty list
     if (this.length === 0) {
-      return false;
+      return false
     }
     //get popped node
-    const popped = this.tail;
+    const popped = this.tail
     //save newTail to a variable (could be null)
-    const newTail = this.tail.prev;
+    const newTail = this.tail.prev
     //if newTail is not null
     if (newTail) {
       //sever connection to popped node
-      newTail.next = null;
+      newTail.next = null
       //sever connection from popped node
-      this.tail.prev = null;
+      this.tail.prev = null
       //in case of 1 length list
     } else {
       //make sure to edit head in case newTail is null
-      this.head = null;
+      this.head = null
     }
     //assign new tail (could be null)
-    this.tail = newTail;
+    this.tail = newTail
     // subtract length
-    this.length--;
+    this.length--
 
-    return popped;
+    return popped
   }
 
   shift() {
     //in case list is empty
     if (!this.head) {
-      return false;
+      return false
     }
     //save shifted node to variable
-    const shiftedNode = this.head;
+    const shiftedNode = this.head
     //make the new head the next (might be null)
-    const newHead = this.head.next; //might be null
+    const newHead = this.head.next //might be null
     //if list is more than 1
     if (this.head !== this.tail) {
-      newHead.prev = null;
-      shiftedNode.next = null;
+      newHead.prev = null
+      shiftedNode.next = null
     } else {
-      this.tail = null;
+      this.tail = null
     }
-    this.head = newHead;
-    this.length--;
-    return shiftedNode;
+    this.head = newHead
+    this.length--
+    return shiftedNode
   }
 
-  unshift(val) {
-    const newNode = new Node(val);
+  unshift(val: any) {
+    const newNode = new Node(val)
     if (!this.head) {
-      this.head = newNode;
-      this.tail = newNode;
+      this.head = newNode
+      this.tail = newNode
     } else {
-      this.head.prev = newNode;
-      newNode.next = this.head;
-      this.head = newNode;
+      this.head.prev = newNode
+      newNode.next = this.head
+      this.head = newNode
     }
-    this.length++;
-    return this;
+    this.length++
+    return this
   }
 
   // insertAtIndex(index, val) {
@@ -127,47 +127,47 @@ export default class LinkedList implements Iterable<Node> {
   //     return this;
   // }
 
-  removeAtIndex(index) {
-    let removedNode;
+  removeAtIndex(index: number) {
+    let removedNode
     if (index >= this.length) {
-      return false;
+      return false
     }
     if (index == 0) {
-      removedNode = this.shift();
+      removedNode = this.shift()
     } else if (index == this.length - 1) {
-      removedNode = this.pop();
+      removedNode = this.pop()
     } else {
-      removedNode = this.getNodeAtIndex(index);
-      const after = removedNode.next;
-      const before = removedNode.prev;
-      removedNode.next = null;
-      removedNode.prev = null;
-      before.next = after;
-      after.prev = before;
-      this.length--;
+      removedNode = this.getNodeAtIndex(index)
+      const after = removedNode.next
+      const before = removedNode.prev
+      removedNode.next = null
+      removedNode.prev = null
+      before.next = after
+      after.prev = before
+      this.length--
     }
-    return removedNode;
+    return removedNode
   }
 
-  getNodeAtIndex(index) {
+  getNodeAtIndex(index: number) {
     if (index >= this.length || index < 0) {
-      return false;
+      return false
     }
-    let currentIndex = 0;
-    let currentNode = this.head;
+    let currentIndex = 0
+    let currentNode = this.head
     while (currentIndex !== index) {
-      currentNode = currentNode.next;
-      currentIndex++;
+      currentNode = currentNode.next
+      currentIndex++
     }
-    return currentNode;
+    return currentNode
   }
 
-  setNodeAtIndex(index, val) {
-    const foundNode = this.getNodeAtIndex(index);
+  setNodeAtIndex(index: number, val: any) {
+    const foundNode = this.getNodeAtIndex(index)
     if (foundNode) {
-      foundNode.value = val;
-      return foundNode;
+      foundNode.value = val
+      return foundNode
     }
-    return null;
+    return null
   }
 }

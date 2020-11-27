@@ -1,11 +1,11 @@
 export default class Slide {
-  id = null;
-  item = null;
-  element = null;
+  id: number = null
+  item: any = null
+  element: any = null
 
-  constructor(id, item, element) {
-    this.id = id;
-    this.item = item;
-    this.element = element;
+  constructor(id: number, item: any, element: any) {
+    this.id = id
+    this.item = item
+    this.element = element
   }
 }

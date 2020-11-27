@@ -1,11 +1,11 @@
 export default class Node {
-  value = null;
-  prev = null;
-  next = null;
+  value: any = null
+  prev: any = null
+  next: any = null
 
-  constructor(value) {
-    this.value = value;
-    this.prev = null;
-    this.next = null;
+  constructor(value: any) {
+    this.value = value
+    this.prev = null
+    this.next = null
   }
 }
