@@ -1,80 +1,106 @@
 import React from 'react'
-
 import { Carousel, Slide } from 'react-x-carousel'
-
 import 'react-x-carousel/dist/index.css'
-import Image1 from './assets/cat-1.jpg'
-import Image2 from './assets/cat-2.jpg'
-import Image3 from './assets/cat-3.jpg'
-import Image4 from './assets/cat-4.jpg'
-import Image5 from './assets/cat-5.jpg'
-import Image6 from './assets/cat-6.jpg'
-import Image7 from './assets/cat-7.jpg'
-import Image8 from './assets/cat-8.jpg'
+import {
+  PeriodicElement,
+  Element
+} from './components/PeriodicElement/PeriodicElement'
+import { Tooltip } from './components/Tooltip/Tooltip'
 
-const items = [
-  {
-    name: 'Charlie',
-    weight: '3.6',
-    image: Image1
-  },
-  {
-    name: 'Oscar',
-    weight: '4.0',
-    image: Image2
-  },
-  {
-    name: 'Alfie',
-    weight: '7.2',
-    image: Image3
-  },
-  {
-    name: 'Max',
-    weight: '3.8',
-    image: Image4
-  },
-  {
-    name: 'Milo',
-    weight: '5.3',
-    image: Image5
-  },
-  {
-    name: 'Jasper',
-    weight: '4.1',
-    image: Image6
-  },
-  {
-    name: 'George',
-    weight: '3.0',
-    image: Image7
-  },
-  {
-    name: 'Leo',
-    weight: '3.9',
-    image: Image8
-  }
-]
+import './App.scss'
 
-function App() {
-  const handleChange = function (node: any) {
-    console.log(node)
+interface Props {}
+
+interface State {
+  elements: Element[]
+  currentElement: Element
+  showTooltip: boolean
+}
+
+class App extends React.Component<Props, State> {
+  constructor(props: any) {
+    super(props)
+
+    const { elements } = require('./periodic.json')
+    this.state = {
+      elements: elements.slice(0, 9),
+      currentElement: null,
+      showTooltip: false
+    }
   }
 
-  return (
-    <div className='App'>
-      <div style={{ width: '40%', height: '400px', margin: '200px auto 0' }}>
-        <Carousel onChange={handleChange}>
-          {items.map((item, idx) => {
-            return (
-              <Slide data={item} key={idx}>
-                <img src={item.image} alt='space' />
-              </Slide>
-            )
-          })}
-        </Carousel>
+  handleChange = (node: any) => {
+    this.setState({
+      currentElement: node.value.item
+    })
+  }
+
+  render() {
+    return (
+      <div className='example-page'>
+        <section className='header'>
+          <div className='fork-me'>
+            <a href='https://github.com/munkk/react-x-carousel'></a>
+          </div>
+
+          <div className='header__inner'>
+            <div className='header__inner-title'>
+              Responsive <br></br> Linked list based <br></br> 3D Carousel
+            </div>
+            <div className='header__inner-frameworks'>
+              <div className='framework'>
+                <a href='/'>
+                  <i className='fab fa-angular'></i>
+                  <span>Angular</span>
+                </a>
+              </div>
+              <div className='framework'>
+                <a href='/'>
+                  <i className='fab fa-react'></i>
+                  <span>React</span>
+                </a>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section className='body'>
+          <div className='body__inner'>
+            <div
+              className='body__inner-example'
+              onMouseEnter={() => this.setState({ showTooltip: true })}
+              onMouseLeave={() => this.setState({ showTooltip: false })}
+            >
+              {this.state.showTooltip && (
+                <Tooltip
+                  text={
+                    this.state.currentElement &&
+                    this.state.currentElement.summary
+                  }
+                />
+              )}
+
+              <Carousel onChange={this.handleChange}>
+                {this.state.elements.map((element, idx) => {
+                  return (
+                    <Slide data={element} key={idx}>
+                      <PeriodicElement element={element} />
+                    </Slide>
+                  )
+                })}
+              </Carousel>
+            </div>
+          </div>
+        </section>
+
+        {/* <section className='footer'>
+          <a href='http://qgrid.github.io/ng2' target='_blank'>
+            See Examples
+          </a>
+        </section> */}
       </div>
-    </div>
-  )
+    )
+  }
 }
 
 export default App
