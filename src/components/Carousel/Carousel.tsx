@@ -1,4 +1,5 @@
 import React, { Children } from 'react'
+import shallowCompare from 'react-addons-shallow-compare'
 
 import LinkedList from '../../models/LinkedList'
 import Node from '../../models/Node'
@@ -46,8 +47,9 @@ interface State {
 export default class Carousel extends React.Component<Props, State> {
   private carouselWrapperRef?: HTMLDivElement
   private sceneRef?: HTMLDivElement
+  private resizeObserver: typeof ResizeObserver
 
-  list = new LinkedList()
+  list: LinkedList
   theta: number = 0
   radius: number = 0
   cellsCount: number = 0
@@ -60,7 +62,7 @@ export default class Carousel extends React.Component<Props, State> {
       initialized: false
     }
 
-    this.buildList()
+    this.list = new LinkedList()
   }
 
   componentDidMount() {
@@ -69,25 +71,47 @@ export default class Carousel extends React.Component<Props, State> {
 
   componentDidUpdate(prevProps: Props, prevState: State) {
     if (!prevState.initialized && this.state.initialized) {
-      this.calculateDimension()
       this.setResizeListener()
+      this.calculateDimension()
       this.changeCarousel()
     }
+
+    if (!this.shallowEqualChildren(prevProps.children, this.props.children)) {
+      this.carouselWrapperRef.style.transition = 'transform 0s'
+      this.calculateDimension()
+      this.changeCarousel()
+      setTimeout(
+        () => (this.carouselWrapperRef.style.transition = 'transform 1s'),
+        0
+      )
+    }
+  }
+
+  shouldComponentUpdate(nextProps, nextState) {
+    return shallowCompare(this.props.children, nextProps, nextState)
   }
 
   componentWillUnmount() {
     this.destroyCarousel()
   }
 
-  buildList() {
-    if (!this.props.children) return
+  shallowEqualChildren(prevChildren, currChildren) {
+    const str1 = prevChildren.map((c) => c.key).join('')
+    const str2 = currChildren.map((c) => c.key).join('')
 
-    Children.map(this.props.children, (item: any, index) => {
-      const slide = new Slide(index, item.props.data, React.createRef())
-      this.list.push(slide)
-    })
+    return str1 === str2
+  }
 
-    this.list.connectTailWithHead()
+  addNewNode(index, item) {
+    const slide = new Slide(index, item.props.data, React.createRef())
+    this.list.push(slide)
+  }
+
+  carouselWrapperRefExist() {
+    return (
+      this.carouselWrapperRef &&
+      this.carouselWrapperRef instanceof HTMLDivElement
+    )
   }
 
   calculateDimension() {
@@ -101,15 +125,20 @@ export default class Carousel extends React.Component<Props, State> {
   }
 
   setResizeListener() {
-    const resizeObserver = new ResizeObserver((entries: any) => {
+    this.resizeObserver = new ResizeObserver((entries: any) => {
       entries.forEach(() => {
+        this.carouselWrapperRef.style.transition = 'transform 0s'
         this.calculateDimension()
         this.changeCarousel()
         this.forceUpdate()
+        setTimeout(
+          () => (this.carouselWrapperRef.style.transition = 'transform 1s'),
+          0
+        )
       })
     })
 
-    resizeObserver.observe(this.sceneRef)
+    this.resizeObserver.observe(this.sceneRef)
   }
 
   changeCarousel() {
@@ -131,7 +160,7 @@ export default class Carousel extends React.Component<Props, State> {
 
   moveRight = () => {
     this.setState(
-      function (state, props) {
+      (state, props) => {
         return {
           currentIndex: state.currentIndex + 1
         }
@@ -144,7 +173,7 @@ export default class Carousel extends React.Component<Props, State> {
 
   moveLeft = () => {
     this.setState(
-      function (state, props) {
+      (state, props) => {
         return {
           currentIndex: state.currentIndex - 1
         }
@@ -163,10 +192,8 @@ export default class Carousel extends React.Component<Props, State> {
 
   navigateWithKeyboard() {}
 
-  destroyCarousel() {}
-
   rotateCarousel() {
-    if (!this.carouselWrapperRef) return
+    if (!this.carouselWrapperRefExist()) return
 
     const angle = this.theta * this.state.currentIndex * -1
     this.carouselWrapperRef.style.transform =
@@ -191,6 +218,8 @@ export default class Carousel extends React.Component<Props, State> {
   }
 
   setItemRef = (element: HTMLElement, index: number) => {
+    if (!element) return
+
     const node = this.list.getNodeAtIndex(index)
     node.value.element = element
   }
@@ -252,22 +281,32 @@ export default class Carousel extends React.Component<Props, State> {
     }
   }
 
+  destroyCarousel() {
+    this.resizeObserver.unobserve(this.sceneRef)
+  }
+
   //RENDER
 
   renderItems() {
     if (!this.props.children || !this.sceneRef) return
 
     const { width, height } = this.sceneRef.getBoundingClientRect()
+    this.list = new LinkedList()
+    return Children.map(this.props.children, (item, index) => {
+      this.addNewNode(index, item)
+      if (index === this.props.children.length - 1) {
+        this.list.connectTailWithHead()
+      }
 
-    return Children.map(this.props.children, (node, index) => {
       const slideProps = {
+        key: index,
         ref: (element: HTMLDivElement) => this.setItemRef(element, index),
-        onClick: this.handleClickItem.bind(this, node, index),
+        onClick: this.handleClickItem.bind(this, item, index),
         className: 'x-carousel__slide',
         style: { width: width + 'px', height: height + 'px' }
       }
 
-      return <div {...slideProps}>{node}</div>
+      return <div {...slideProps}>{item}</div>
     })
   }
 

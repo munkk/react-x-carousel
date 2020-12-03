@@ -1,5 +1,5 @@
 import React from 'react'
-
+import { Link } from 'react-router-dom'
 import { Carousel, Slide } from 'react-x-carousel'
 import 'react-x-carousel/dist/index.css'
 import {
@@ -7,6 +7,7 @@ import {
   Element
 } from '../../components/PeriodicElement/PeriodicElement'
 import { Tooltip } from '../../components/Tooltip/Tooltip'
+import Slider from '@material-ui/core/Slider'
 
 import './MainPage.scss'
 
@@ -38,6 +39,13 @@ class MainPage extends React.Component<Props, State> {
     this.setState({
       currentElement: node.value.item
     })
+  }
+
+  onSliderChange = (event: object, value: number) => {
+    const { elements } = require('../../assets/periodic.json')
+    return this.setState((state, props) => ({
+      elements: elements.slice(0, value)
+    }))
   }
 
   render() {
@@ -85,24 +93,36 @@ class MainPage extends React.Component<Props, State> {
                 />
               )}
 
-              <Carousel onChange={this.handleChange}>
+              <Carousel
+                // onInit={instance => this.carousel = instance}
+                onChange={this.handleChange}
+              >
                 {this.state.elements.map((element, idx) => {
                   return (
-                    <Slide data={element} key={idx}>
+                    <Slide data={element} key={element.name}>
                       <PeriodicElement element={element} />
                     </Slide>
                   )
                 })}
               </Carousel>
             </div>
+
+            <Slider
+              className='material-slider'
+              defaultValue={this.state.elements.length}
+              valueLabelDisplay='auto'
+              step={1}
+              marks
+              min={1}
+              max={20}
+              onChange={this.onSliderChange}
+            />
           </div>
         </section>
 
-        {/* <section className='footer'>
-          <a href='http://qgrid.github.io/ng2' target='_blank'>
-            See Examples
-          </a>
-        </section> */}
+        <section className='footer'>
+          <Link to='/features'>See Examples</Link>
+        </section>
       </div>
     )
   }
