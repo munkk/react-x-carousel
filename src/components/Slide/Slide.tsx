@@ -3,7 +3,7 @@ import React, { Children } from 'react'
 import './Slide.scss'
 
 interface Props {
-  data: any
+  data?: any
 }
 
 interface State {}

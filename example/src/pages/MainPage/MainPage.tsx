@@ -93,10 +93,7 @@ class MainPage extends React.Component<Props, State> {
                 />
               )}
 
-              <Carousel
-                // onInit={instance => this.carousel = instance}
-                onChange={this.handleChange}
-              >
+              <Carousel onChange={this.handleChange}>
                 {this.state.elements.map((element, idx) => {
                   return (
                     <Slide data={element} key={element.name}>
@@ -121,7 +118,14 @@ class MainPage extends React.Component<Props, State> {
         </section>
 
         <section className='footer'>
-          <Link to='/features'>See Examples</Link>
+          <ul>
+            <li>
+              <Link to='/features/start'>How to Install</Link>
+            </li>
+            <li>
+              <Link to='/features/basic'>See Examples</Link>
+            </li>
+          </ul>
         </section>
       </div>
     )

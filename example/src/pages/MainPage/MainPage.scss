@@ -1,4 +1,6 @@
 .example-page {
+  overflow: hidden;
+
   .header {
     background-color: #282c34;
     color: #ffffff;
@@ -71,13 +73,25 @@
     text-align: center;
     margin: 100px 0 50px;
 
-    a {
-      text-decoration: none;
-      vertical-align: middle;
-      background-color: #0078cf;
-      color: white;
-      padding: 10px 15px;
-      font-size: 18px;
+    ul {
+      list-style-type: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+
+      li {
+        margin: 1rem;
+
+        a {
+          text-decoration: none;
+          vertical-align: middle;
+          background-color: #0078cf;
+          color: white;
+          padding: 10px 15px;
+          font-size: 18px;
+        }
+      }
     }
   }
 }

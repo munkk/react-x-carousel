@@ -1,2 +1,51 @@
 .features-page {
+  display: flex;
+  padding: 50px 30px 30px 200px;
+  overflow: hidden;
+
+  &__drawer {
+    background: white;
+    border-right: 1px solid rgb(208, 218, 228);
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    bottom: 0px;
+    width: 200px;
+    overflow: auto;
+  }
+
+  &__content {
+    padding: 40px;
+    width: 100%;
+  }
+}
+
+.drawer-logo {
+  padding: 16px;
+  border-bottom: 1px #d0dae4 solid;
+  font-size: 20px;
+}
+
+.drawer-list {
+  margin: 30px 0;
+  list-style: none;
+  padding: 0 15px;
+
+  li {
+    line-height: 2rem;
+
+    a {
+      text-decoration: none;
+      color: #4b4e6a;
+    }
+  }
+}
+
+.feature-h1 {
+  font-size: 2rem;
+  line-height: 2.625rem;
+  margin-top: 2rem;
+  margin-bottom: 0.625rem;
+  color: rgb(97, 104, 181);
+  font-weight: 600 !important;
 }

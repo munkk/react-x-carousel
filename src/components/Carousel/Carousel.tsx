@@ -206,7 +206,7 @@ export default class Carousel extends React.Component<Props, State> {
     )
 
     this.updateClassList()
-    this.props.onChange(this.getCurrentNode())
+    this.props.onChange && this.props.onChange(this.getCurrentNode())
   }
 
   setSceneRef = (node: HTMLDivElement) => {
