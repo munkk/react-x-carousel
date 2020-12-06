@@ -35,6 +35,8 @@ interface Props {
   cellSize?: number
   autoPlay?: boolean
   children?: React.ReactChild[]
+
+  onInit?: (instance: Carousel) => void
   useKeyboardArrows?: boolean
   onChange?: (node: Node) => void
 }
@@ -67,6 +69,10 @@ export default class Carousel extends React.Component<Props, State> {
 
   componentDidMount() {
     this.setState({ initialized: true })
+
+    if (this.props.onInit && typeof this.props.onInit === 'function') {
+      this.props.onInit(this)
+    }
   }
 
   componentDidUpdate(prevProps: Props, prevState: State) {
@@ -76,6 +82,7 @@ export default class Carousel extends React.Component<Props, State> {
       this.changeCarousel()
     }
 
+    // means user changed slides
     if (!this.shallowEqualChildren(prevProps.children, this.props.children)) {
       this.carouselWrapperRef.style.transition = 'transform 0s'
       this.calculateDimension()
@@ -206,7 +213,9 @@ export default class Carousel extends React.Component<Props, State> {
     )
 
     this.updateClassList()
-    this.props.onChange && this.props.onChange(this.getCurrentNode())
+    if (this.props.onChange && typeof this.props.onChange === 'function') {
+      this.props.onChange(this.getCurrentNode())
+    }
   }
 
   setSceneRef = (node: HTMLDivElement) => {

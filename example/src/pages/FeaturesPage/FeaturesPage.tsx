@@ -43,6 +43,9 @@ class FeaturesPage extends React.Component<Props, State> {
             <li>
               <Link to='/features/basic'>Basic example</Link>
             </li>
+            <li>
+              <Link to='/features/navigation'>Navigation</Link>
+            </li>
           </ul>
         </nav>
       </aside>

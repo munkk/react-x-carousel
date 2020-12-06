@@ -6,7 +6,8 @@ import FeaturesPage from './pages/FeaturesPage/FeaturesPage'
 
 import './App.scss'
 import GettingStarted from './pages/FeaturesPage/GettingStarted/GettingStarted'
-import BasicLayout from './pages/FeaturesPage/BasicExample/BasicExample'
+import BasicExample from './pages/FeaturesPage/BasicExample/BasicExample'
+import NavigationExample from './pages/FeaturesPage/NavigationExample/NavigationExample'
 
 class App extends React.Component {
   render() {
@@ -23,7 +24,12 @@ class App extends React.Component {
           <Route
             exact
             path='/features/basic'
-            component={() => <FeaturesPage children={<BasicLayout />} />}
+            component={() => <FeaturesPage children={<BasicExample />} />}
+          />
+          <Route
+            exact
+            path='/features/navigation'
+            component={() => <FeaturesPage children={<NavigationExample />} />}
           />
         </Switch>
       </HashRouter>
