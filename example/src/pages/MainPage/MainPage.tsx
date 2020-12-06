@@ -1,13 +1,14 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
+import Slider from '@material-ui/core/Slider'
 import { Carousel, Slide } from 'react-x-carousel'
 import 'react-x-carousel/dist/index.css'
+
 import {
   PeriodicElement,
   Element
 } from '../../components/PeriodicElement/PeriodicElement'
 import { Tooltip } from '../../components/Tooltip/Tooltip'
-import Slider from '@material-ui/core/Slider'
 
 import './MainPage.scss'
 
@@ -62,7 +63,7 @@ class MainPage extends React.Component<Props, State> {
             </div>
             <div className='header__inner-frameworks'>
               <div className='framework'>
-                <a href='/'>
+                <a href='https://munkk.github.io/angular-x-carousel'>
                   <i className='fab fa-angular'></i>
                   <span>Angular</span>
                 </a>

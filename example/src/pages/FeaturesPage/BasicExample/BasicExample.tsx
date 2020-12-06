@@ -2,18 +2,10 @@ import React from 'react'
 import { Carousel, Slide } from 'react-x-carousel'
 import 'react-x-carousel/dist/index.css'
 
-import { HashRouter, Switch, Route, Link } from 'react-router-dom'
-import Highlight, { defaultProps } from 'prism-react-renderer'
-import theme from 'prism-react-renderer/themes/nightOwlLight'
-
-import './BasicExample.scss'
 import { HighlightWrapper } from '../Highlight/Hightlight'
+import './BasicExample.scss'
 
-interface Props {}
-
-interface State {}
-
-export default class BasicExample extends React.Component<Props, State> {
+export default class BasicExample extends React.Component {
   basicJs = () => {
     return `
 <div className='basic-example__wrapper'>
